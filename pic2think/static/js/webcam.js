@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function send() {
     sendDataToDjango(imageData);
-    window.location.href = "/textOcr/";
+    window.location.href = "/result/";
   }
 
   function sendDataToDjango(imageDataURL) {

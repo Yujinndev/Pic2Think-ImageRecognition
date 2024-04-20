@@ -107,9 +107,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "pic2think\\model"),
+    BASE_DIR,
     os.path.join(BASE_DIR, "pic2think\\static\\images"),
     os.path.join(BASE_DIR, "pic2think\\static\\audio"),
+    os.path.join(BASE_DIR, "pic2think\\model"),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

@@ -12,10 +12,8 @@
     </div>
   </div>
   <section class="result-container">
-    <div class="col">
-      <p class="text">Predicted Class:</p>
-      <p class="message">{{ class_result }}</p>
-    </div>
+    <p class="text">Predicted Class: {{ class_result }}</p>
+    <p class="text">Accuracy: {{ accuracy }}%</p>
   </section>
 </div>
 {% endblock %}

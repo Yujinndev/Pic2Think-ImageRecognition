@@ -56,7 +56,7 @@ header {
 .result-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   position: relative;
   width: 51.65vw;
   gap: 16px;
@@ -140,7 +140,7 @@ canvas {
   align-items: center;
 }
 
-.mac-controls > .item {
+.mac-controls .item {
   width: 14px;
   height: 14px;
   border-radius: 50%;
@@ -166,8 +166,8 @@ canvas {
 .col {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: start;
+  justify-content: center;
+  align-items: center;
   flex: 30%;
   gap: 8px;
 }
@@ -175,8 +175,21 @@ canvas {
 label,
 .text {
   font: 700 16px "Rowdies", sans-serif;
+  margin: 0;
 }
 
 .hero-text {
   font: 700 72px "Rowdies", sans-serif;
+}
+
+.webcam-option {
+  margin-left: 16px;
+  background-color: rgb(202, 202, 202);
+  border-radius: 8px 8px 0 0;
+  padding: 4px 16px;
+  margin-bottom: -8px;
+}
+
+.preview {
+  z-index: 10;
 }

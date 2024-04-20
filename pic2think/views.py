@@ -2,7 +2,6 @@ import io
 import json
 import os
 import base64
-import time
 import numpy as np
 import tensorflow as tf
 from pic2think import forms
@@ -13,25 +12,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 
 current_image = os.path.join(settings.STATICFILES_DIRS[1], "captured_image.png")
-model_path = os.path.join(settings.STATICFILES_DIRS[0], "classification.keras")
+model_path = os.path.join(settings.STATICFILES_DIRS[3], "classification.keras")
 model = tf.keras.models.load_model(model_path)
-
-class_labels = ["chicken", "tiger"]
+class_labels = ["CHICKEN", "TIGER"]
 
 
 def index(request):
-    return render(request, "home.html", {})
+    return render(request, "index.html", {})
 
 
 def classify_image(image_name):
-    static_dir = settings.STATICFILES_DIRS[0]
-    image_path = os.path.join(static_dir, image_name)
-
-    time.sleep(2)
-    # Read the content of the uploaded file
-    image_content = image_path.read()
+    with open(image_name, "rb") as f:
+        image_bytes = f.read()
     # Create an in-memory file-like object from the content
-    image_stream = io.BytesIO(image_content)
+    image_stream = io.BytesIO(image_bytes)
     img = tf.keras.preprocessing.image.load_img(image_stream, target_size=(150, 150))
     img_array = tf.keras.preprocessing.image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
@@ -39,17 +33,20 @@ def classify_image(image_name):
 
     predictions = model.predict(img_array)
     predicted_class = np.argmax(predictions)
+    predicted_accuracy = predictions[0][predicted_class] * 100
 
     result = class_labels[predicted_class]
-
-    return result
+    return result, predicted_accuracy
 
 
 def recognized(request):
     result = classify_image(current_image)
+    accuracy = round(result[1], 2)
 
     return render(
-        request, "result.html", {"class_result": result, "image": current_image}
+        request,
+        "result.html",
+        {"class_result": result[0], "accuracy": accuracy, "image": current_image},
     )
 
 
@@ -62,14 +59,14 @@ def file_upload(request):
             global current_image
             current_image = uploaded_image.image.name
 
-            return redirect("textOcr")
+            return redirect("result")
 
     else:
         form = forms.ImageUploadForm()
     return render(request, "upload_image.html", {"form": form})
 
 
-def live_cam(request):
+def webcam(request):
     return render(request, "webcam.html")
 
 
