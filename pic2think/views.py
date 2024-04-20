@@ -66,6 +66,39 @@ def file_upload(request):
     return render(request, "upload_image.html", {"form": form})
 
 
+def live_cam(request):
+    return render(request, "livecam.html")
+
+
+def live_classification(request):
+    if request.method == "POST" and request.FILES["image"]:
+        uploaded_image = request.FILES["image"]
+        image_name = uploaded_image.name  # Get the name of the uploaded image
+        # Read the content of the uploaded file
+        image_content = uploaded_image.read()
+        # Create an in-memory file-like object from the content
+        image_stream = io.BytesIO(image_content)
+        img = tf.keras.preprocessing.image.load_img(
+            image_stream, target_size=(150, 150)
+        )
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array /= 255.0
+
+        predictions = model.predict(img_array)
+        predicted_class = np.argmax(predictions)
+        predicted_accuracy = predictions[0][predicted_class] * 100
+
+        data = {
+            "result": class_labels[predicted_class],
+            "accuracy": round(predicted_accuracy, 2),
+            "image_name": image_name,
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({"error": "No object detected."})
+
+
 def webcam(request):
     return render(request, "webcam.html")
 
