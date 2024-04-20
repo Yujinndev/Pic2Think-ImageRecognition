@@ -1,0 +1,27 @@
+{% extends 'layout/base.html' %}{% load static %} {% block content %}
+
+<div class="main">
+  <div class="container">
+    <div class="mac-controls">
+      <div class="item red"></div>
+      <div class="item orange"></div>
+      <div class="item green"></div>
+    </div>
+    <div>
+      <img id="uploaded-image" src="{% static 'placeholder-image.png' %}" />
+    </div>
+  </div>
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    id="upload-form"
+    class="result-container"
+  >
+    {% csrf_token %}
+    <div class="w-75">{{ form }}</div>
+    <button type="submit" class="w-25 btn btn-success ms-2">Upload</button>
+  </form>
+</div>
+
+{% endblock %}

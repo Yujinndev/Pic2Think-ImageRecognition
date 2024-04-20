@@ -1,0 +1,21 @@
+{% extends 'layout/base.html' %}{% load static %} {% block content %}
+
+<div class="main">
+  <div class="container">
+    <div class="mac-controls">
+      <div class="item red"></div>
+      <div class="item orange"></div>
+      <div class="item green"></div>
+    </div>
+    <div>
+      <img id="uploaded-image" src="{% static image %}" />
+    </div>
+  </div>
+  <section class="result-container">
+    <div class="col">
+      <p class="text">Predicted Class:</p>
+      <p class="message">{{ class_result }}</p>
+    </div>
+  </section>
+</div>
+{% endblock %}
