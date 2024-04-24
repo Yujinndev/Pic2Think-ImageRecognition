@@ -1,0 +1,27 @@
+{% extends 'layout/base.html' %}{% load static %} {% block content %}
+<script defer src="{% static 'js/speech.js' %}"></script>
+
+<div class="main">
+  <div class="container">
+    <div class="mac-controls">
+      <div class="item red"></div>
+      <div class="item orange"></div>
+      <div class="item green"></div>
+    </div>
+    <p id="recordingStatus" class="w-auto text-center"></p>
+
+    <div
+      class="d-flex max-h-70vh min-h-40vh justify-content-center gap-2 overflow-y-scroll"
+    >
+      <!-- <div class="d-flex gap-2 w-50">
+        <button id="startRecordingBtn" class="w-75 btn btn-success">
+          Start
+        </button>
+        <button id="stopRecordingBtn" class="w-75 btn btn-danger">Stop</button>
+      </div> -->
+      <div class="texts w-100"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

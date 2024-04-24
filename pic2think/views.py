@@ -5,11 +5,11 @@ import base64
 import numpy as np
 import tensorflow as tf
 from pic2think import forms
+from django.http import JsonResponse
+from django.core.files.base import ContentFile
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.base import ContentFile
 
 current_image = os.path.join(settings.STATICFILES_DIRS[1], "captured_image.png")
 model_path = os.path.join(settings.STATICFILES_DIRS[3], "classification.keras")
@@ -127,3 +127,7 @@ def handle_video(request):
         return JsonResponse({"status": "success"})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method"})
+
+
+def open_mic(request):
+    return render(request, "mic.html", {})

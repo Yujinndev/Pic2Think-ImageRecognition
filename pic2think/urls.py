@@ -11,7 +11,8 @@ urlpatterns = [
     path("liveclassification/", views.live_classification, name="live"),
     path("webcam/", views.webcam, name="webcam"),
     path("capture/", views.handle_video, name="capture"),
+    path("mic/", views.open_mic, name="mic"),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static("/images/", document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static("/audio/", document_root=settings.STATICFILES_DIRS[2])

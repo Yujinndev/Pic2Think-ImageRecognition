@@ -129,6 +129,13 @@ canvas {
   border-radius: 8px;
 }
 
+.max-h-70vh {
+  max-height: 70vh;
+}
+.min-h-40vh {
+  min-height: 40vh;
+}
+
 .mac-controls {
   position: relative;
   display: flex;
@@ -192,4 +199,17 @@ label,
 
 .preview {
   z-index: 10;
+}
+
+.texts p {
+  color: black;
+  text-align: left;
+  width: 100%;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.texts p.replay {
+  text-align: right;
 }

@@ -1,128 +1,89 @@
-{% load static %}
+{% extends 'layout/base.html' %}{% load static %} {% block content %}
+<script defer src="{% static 'js/webcam.js' %}"></script>
+<div class="main">
+  <div class="container">
+    <div class="mac-controls">
+      <div class="item red"></div>
+      <div class="item orange"></div>
+      <div class="item green"></div>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-    <script defer src="{% static 'js/webcam.js' %}"></script>
-    <title>Pic2Think</title>
-  </head>
-
-  <body>
-    <header>
-      <div class="brand">Pic2Think</div>
-      <ul class="links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/webcam">Webcam</a></li>
-        <li><a href="/upload">Upload</a></li>
-      </ul>
-    </header>
-
-    <div class="main">
-      <div class="container">
-        <div class="mac-controls">
-          <div class="item red"></div>
-          <div class="item orange"></div>
-          <div class="item green"></div>
-
-          <small
-            style="background-color: rgba(186, 255, 149, 1)"
-            class="webcam-option"
-            >Realtime</small
-          >
-          <a href="/webcam" style="margin-left: 0" class="webcam-option"
-            ><small>Upload</small></a
-          >
-        </div>
-        <div class="preview">
-          <video id="video" autoplay muted></video>
-          <img id="previewImage" style="display: none" />
-        </div>
-      </div>
-
-      <section class="result-container">
-        <p class="text" id="result">Predicted Class:</p>
-        <p class="text" id="accuracy">Accuracy:</p>
-      </section>
+      <small
+        style="background-color: rgba(186, 255, 149, 1)"
+        class="webcam-option"
+        >Realtime</small
+      >
+      <a href="/webcam" style="margin-left: 0" class="webcam-option"
+        ><small>Upload</small></a
+      >
     </div>
+    <div class="preview">
+      <video id="video" autoplay muted></video>
+      <img id="previewImage" style="display: none" />
+    </div>
+  </div>
 
-    <script>
-      const video = document.getElementById("video");
+  <section class="result-container">
+    <p class="text" id="result">Predicted Class:</p>
+    <p class="text" id="accuracy">Accuracy:</p>
+  </section>
+</div>
 
-      function getCSRFToken() {
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.startsWith("csrftoken=")) {
-            return cookie.substring("csrftoken=".length, cookie.length);
-          }
-        }
-        return null;
+<script defer>
+  const video = document.getElementById("video");
+
+  function getCSRFToken() {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith("csrftoken=")) {
+        return cookie.substring("csrftoken=".length, cookie.length);
       }
+    }
+    return null;
+  }
 
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          video.srcObject = stream;
-          setInterval(classifyImage, 5000); // Classify image every 5 seconds
+  navigator.mediaDevices
+    .getUserMedia({ video: true })
+    .then((stream) => {
+      video.srcObject = stream;
+      setInterval(classifyImage, 5000); // Classify image every 5 seconds
+    })
+    .catch((error) => {
+      console.error("Error accessing webcam:", error);
+    });
+
+  const classifyImage = async () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageBlob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg")
+    );
+
+    const formData = new FormData();
+    formData.append("image", imageBlob, "webcam_image.jpg");
+
+    const csrfToken = getCSRFToken(); // Assuming getCSRFToken() retrieves the CSRF token
+    if (csrfToken) {
+      fetch("/liveclassification/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrfToken,
+        },
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById(
+            "result"
+          ).innerText = `Predicted Class: ${data.result}`;
+          document.getElementById(
+            "accuracy"
+          ).innerText = `Accuracy: ${data.accuracy}%`;
         })
-        .catch((error) => {
-          console.error("Error accessing webcam:", error);
-        });
-
-      const classifyImage = async () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas
-          .getContext("2d")
-          .drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageBlob = await new Promise((resolve) =>
-          canvas.toBlob(resolve, "image/jpeg")
-        );
-
-        const formData = new FormData();
-        formData.append("image", imageBlob, "webcam_image.jpg");
-
-        const csrfToken = getCSRFToken(); // Assuming getCSRFToken() retrieves the CSRF token
-        if (csrfToken) {
-          fetch("/liveclassification/", {
-            method: "POST",
-            headers: {
-              "X-CSRFToken": csrfToken,
-            },
-            body: formData,
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              document.getElementById(
-                "result"
-              ).innerText = `Predicted Class: ${data.result}`;
-              document.getElementById(
-                "accuracy"
-              ).innerText = `Accuracy: ${data.accuracy}%`;
-            })
-            .catch((error) => console.error("Error:", error));
-        }
-      };
-    </script>
-  </body>
-</html>
+        .catch((error) => console.error("Error:", error));
+    }
+  };
+</script>
+{% endblock %}
