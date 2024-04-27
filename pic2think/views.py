@@ -24,7 +24,7 @@ def index(request):
 def classify_image(image_name):
     with open(image_name, "rb") as f:
         image_bytes = f.read()
-    # Create an in-memory file-like object from the content
+
     image_stream = io.BytesIO(image_bytes)
     img = tf.keras.preprocessing.image.load_img(image_stream, target_size=(150, 150))
     img_array = tf.keras.preprocessing.image.img_to_array(img)

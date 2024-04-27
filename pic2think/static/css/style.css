@@ -187,6 +187,7 @@ label,
 
 .hero-text {
   font: 700 72px "Rowdies", sans-serif;
+  text-align: center;
 }
 
 .webcam-option {
@@ -210,6 +211,8 @@ label,
   border-radius: 8px;
   margin-bottom: 10px;
 }
-.texts p.replay {
+
+.texts p.reply {
   text-align: right;
+  background-color: antiquewhite;
 }

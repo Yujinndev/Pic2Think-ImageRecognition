@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const texts = document.querySelector(".texts");
   window.SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
+
   const recognition = new SpeechRecognition();
   recognition.interimResults = true;
 
@@ -20,27 +21,62 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.results[0].isFinal) {
       let utterance;
 
-      if (text.includes("how are you")) {
-        var answer = "I am fine, Thanks for your concern!";
-        var responseLine = document.createElement("p");
+      const textConditions = [
+        {
+          keyword: "hello",
+          response: "Hi!",
+        },
+        {
+          keyword: "hi",
+          response: "Hello!",
+        },
+        { keyword: "bye", response: "Goodbye! Have a great day!" },
+        {
+          keyword: "weather",
+          response:
+            "The weather is very bad in La Union, it reaches about 43 degree heat index!",
+        },
+        {
+          keyword: "source",
+          response: "It is based on the Google Weather System",
+        },
+        {
+          keyword: "how are you",
+          response: "I am fine, Thanks for your concern!",
+        },
+        {
+          keyword: "your name",
+          response:
+            "I'm an AI bot chat assistant created by Master Mark Eugene",
+        },
+        {
+          keyword: "you do",
+          response: "I can be your talk buddy for now",
+        },
+        {
+          keyword: "joke",
+          response:
+            "Why do programmers prefer dark mode? Because light attracts bugs! HEHEHE",
+        },
+        // Add more conditions as needed
+      ];
 
-        responseLine.classList.add("replay");
-        responseLine.innerText = answer;
-        texts.appendChild(responseLine);
+      for (let i = 0; i < textConditions.length; i++) {
+        let condition = textConditions[i];
+        if (text.includes(condition.keyword)) {
+          let answer = condition.response;
+          let responseLine = document.createElement("p");
 
-        utterance = new SpeechSynthesisUtterance(answer);
-        synth.speak(utterance);
-      } else if (text.includes("what's your name")) {
-        var answer = "I'm an AI assistant created by Master Mark Eugene";
-        var responseLine = document.createElement("p");
+          responseLine.classList.add("reply");
+          responseLine.innerText = answer;
+          texts.appendChild(responseLine);
 
-        responseLine.classList.add("replay");
-        responseLine.innerText = answer;
-        texts.appendChild(responseLine);
-
-        utterance = new SpeechSynthesisUtterance(answer);
-        synth.speak(utterance);
+          utterance = new SpeechSynthesisUtterance(answer);
+          synth.speak(utterance);
+          break;
+        }
       }
+
       newLine = document.createElement("p");
     }
   });
